@@ -45,7 +45,7 @@ function HomeScreen() {
     }
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/chat/', requestOptions);
+      const response = await fetch('http://127.0.0.1:8000/api/chat', requestOptions);
       const data = await response.json();
       if (!response.ok) throw new Error(data.error.message || 'Failed to generate bot response');
       console.log('Bot response data:', data);
