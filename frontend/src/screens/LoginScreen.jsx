@@ -1,50 +1,102 @@
-import React from 'react'
-import FormContainer from '../components/FormContainer'
-import { Form } from 'react-bootstrap'
-import { useState } from 'react'
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, Link } from "react-router-dom";
+import { loginUser, clearAuthError } from "../slices/authSlice";
+import FormComponent from "../components/FormComponent";
+import Loader from "../components/Loader";
 
 function LoginScreen() {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const submitHandler = (e) => {
-        e.preventDefault()
-        console.log('Form submitted')
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { userInfo, loading, error } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (userInfo) {
+      navigate("/");
     }
+    return () => {
+      dispatch(clearAuthError());
+    };
+  }, [userInfo, navigate, dispatch]);
+
+  const submitHandler = (e) => {
+    e.preventDefault();
+    dispatch(loginUser({ username, password }));
+  };
 
   return (
-    <FormContainer>
-        <div className='text-center mb-4'>
-            <h1>Welcome Back!</h1>
-            <p>Please Sign In to your account</p>
+    <div className="auth-page">
+      <div className="auth-card">
+        <div className="auth-logo">
+          <svg
+            width="40"
+            height="40"
+            viewBox="0 0 40 40"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <rect width="40" height="40" rx="8" fill="#10a37f" />
+            <text
+              x="8"
+              y="28"
+              fontFamily="monospace"
+              fontSize="18"
+              fontWeight="bold"
+              fill="white"
+            >
+              .*
+            </text>
+          </svg>
+          <span className="auth-logo-text">Regex Explainer</span>
         </div>
 
-        <Form onSubmit={submitHandler}>
-            <Form.Group controlId='email' className='mb-3'>
-                <Form.Label>Email Address</Form.Label>
-                <Form.Control
-                    type='email'
-                    placeholder='Enter email'
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                ></Form.Control>
-            </Form.Group>
-           
-            <Form.Group controlId='password' className='mb-3'>
-                <Form.Label>Password</Form.Label>
-                <Form.Control
-                    type='password'
-                    placeholder='Enter password'
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                ></Form.Control>
-            </Form.Group>
+        <h2 className="auth-title">Welcome back</h2>
+        <p className="auth-subtitle">Sign in to your account to continue</p>
 
-            <button type='submit' className='btn btn-primary w-100'>Sign In</button>
+        {error && <div className="auth-error">{error}</div>}
 
-        </Form>
-    </FormContainer>
-  )
+        <FormComponent onSubmit={submitHandler}>
+          <div className="form-group">
+            <label className="form-label">Username</label>
+            <input
+              type="text"
+              className="form-input"
+              placeholder="Enter your username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Password</label>
+            <input
+              type="password"
+              className="form-input"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+
+          <button type="submit" className="auth-btn" disabled={loading}>
+            {loading ? <Loader size="small" /> : "Sign in"}
+          </button>
+        </FormComponent>
+
+        <p className="auth-switch">
+          Don&apos;t have an account?{" "}
+          <Link to="/register" className="auth-link">
+            Sign up
+          </Link>
+        </p>
+      </div>
+    </div>
+  );
 }
 
-export default LoginScreen
+export default LoginScreen;
