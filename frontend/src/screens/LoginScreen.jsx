@@ -1,8 +1,12 @@
 import React from 'react'
 import FormContainer from '../components/FormContainer'
 import { Form } from 'react-bootstrap'
+import { useState } from 'react'
 
 function LoginScreen() {
+
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
     const submitHandler = (e) => {
         e.preventDefault()
         console.log('Form submitted')
@@ -21,6 +25,8 @@ function LoginScreen() {
                 <Form.Control
                     type='email'
                     placeholder='Enter email'
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                 ></Form.Control>
             </Form.Group>
            
@@ -29,6 +35,8 @@ function LoginScreen() {
                 <Form.Control
                     type='password'
                     placeholder='Enter password'
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                 ></Form.Control>
             </Form.Group>
 
